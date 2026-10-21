@@ -1,0 +1,18 @@
+{
+  "name": "Dulces Maxi",
+  "short_name": "Dulces Maxi",
+  "description": "Mermeladas, dulces y pastelería artesanal en Salta",
+  "lang": "es-AR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF7E8",
+  "theme_color": "#C51D5D",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
