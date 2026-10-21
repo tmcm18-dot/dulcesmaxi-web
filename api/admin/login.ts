@@ -1,3 +1,4 @@
+import process from 'node:process'
 import {
   LOCK_COOKIE,
   SESSION_COOKIE,
@@ -13,7 +14,7 @@ import {
   sameOrigin,
   signLock,
   verifyPassword,
-} from '../../lib/admin-auth'
+} from '../../lib/admin-auth.js'
 
 export const config = { runtime: 'nodejs' }
 

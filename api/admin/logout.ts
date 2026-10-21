@@ -1,4 +1,4 @@
-import { LOCK_COOKIE, SESSION_COOKIE, clearCookieHeader } from '../../lib/admin-auth'
+import { LOCK_COOKIE, SESSION_COOKIE, clearCookieHeader } from '../../lib/admin-auth.js'
 
 export const config = { runtime: 'nodejs' }
 

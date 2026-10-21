@@ -1,5 +1,6 @@
+import process from 'node:process'
 import { next, rewrite } from '@vercel/functions'
-import { adminPathFromEnv, isSecretAdminPath, readSession } from './lib/admin-auth'
+import { adminPathFromEnv, isSecretAdminPath, readSession } from './lib/admin-auth.js'
 
 export const config = {
   runtime: 'nodejs',

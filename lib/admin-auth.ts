@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 const encoder = new TextEncoder()
 
 export const SESSION_COOKIE = 'dm_admin_sess'
