@@ -103,6 +103,10 @@ export async function GET(request) {
   return html(200, loginHtml('', until))
 }
 
+export function HEAD(request) {
+  return GET(request)
+}
+
 export async function POST(request) {
   if (!sameOrigin(request)) {
     return html(403, loginHtml('Pedido rechazado.'))

@@ -17,3 +17,7 @@ export function POST(request) {
 export function GET(request) {
   return logoutResponse(request)
 }
+
+export function HEAD(request) {
+  return logoutResponse(request)
+}
