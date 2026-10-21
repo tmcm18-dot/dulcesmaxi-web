@@ -4,7 +4,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "proxy": {
-    "entrypoint": "proxy.ts",
+    "entrypoint": "proxy.js",
     "matcher": [
       "/admin",
       "/admin/:path*",

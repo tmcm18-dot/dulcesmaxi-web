@@ -1,6 +1,5 @@
-import process from 'node:process'
 import { next, rewrite } from '@vercel/functions'
-import { adminPathFromEnv, isSecretAdminPath, readSession } from './lib/admin-auth.js'
+import { adminPathFromEnv, env, isSecretAdminPath, readSession } from './lib/admin-auth.js'
 
 export const config = {
   runtime: 'nodejs',
@@ -13,10 +12,10 @@ function notFound() {
   })
 }
 
-export default async function proxy(request: Request) {
+export default async function proxy(request) {
   const url = new URL(request.url)
   const { pathname } = url
-  const secret = process.env.ADMIN_SESSION_SECRET ?? ''
+  const secret = env('ADMIN_SESSION_SECRET')
   const adminPath = adminPathFromEnv()
   const sessionOk = secret ? await readSession(request, secret) : false
 

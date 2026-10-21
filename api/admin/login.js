@@ -1,4 +1,3 @@
-import process from 'node:process'
 import {
   LOCK_COOKIE,
   SESSION_COOKIE,
@@ -8,6 +7,7 @@ import {
   clientIp,
   cookieHeader,
   createSessionToken,
+  env,
   isLocked,
   nextLock,
   readLock,
@@ -18,7 +18,7 @@ import {
 
 export const config = { runtime: 'nodejs' }
 
-const ipAttempts = new Map<string, { n: number; until: number }>()
+const ipAttempts = new Map()
 
 function loginHtml(error = '', lockedUntil = 0) {
   const locked = lockedUntil > Date.now()
@@ -66,7 +66,7 @@ function loginHtml(error = '', lockedUntil = 0) {
 </html>`
 }
 
-function html(status: number, body: string, cookies: string[] = [], extra: HeadersInit = {}) {
+function html(status, body, cookies = [], extra = {}) {
   const headers = new Headers({
     'content-type': 'text/html; charset=utf-8',
     'cache-control': 'no-store',
@@ -77,7 +77,7 @@ function html(status: number, body: string, cookies: string[] = [], extra: Heade
   return new Response(body, { status, headers })
 }
 
-function ipLocked(ip: string) {
+function ipLocked(ip) {
   const row = ipAttempts.get(ip)
   if (!row) return false
   if (row.until > Date.now()) return true
@@ -88,29 +88,29 @@ function ipLocked(ip: string) {
   return false
 }
 
-function bumpIp(ip: string) {
+function bumpIp(ip) {
   const prev = ipAttempts.get(ip) ?? { n: 0, until: 0 }
   const n = prev.n + 1
   const until = n >= 5 ? Date.now() + 15 * 60 * 1000 : 0
   ipAttempts.set(ip, { n, until })
 }
 
-export async function GET(request: Request) {
-  const secret = process.env.ADMIN_SESSION_SECRET ?? ''
+export async function GET(request) {
+  const secret = env('ADMIN_SESSION_SECRET')
   const lock = secret ? await readLock(request, secret) : { n: 0, until: 0 }
   const ip = clientIp(request)
   const until = Math.max(lock.until, ipAttempts.get(ip)?.until ?? 0)
   return html(200, loginHtml('', until))
 }
 
-export async function POST(request: Request) {
+export async function POST(request) {
   if (!sameOrigin(request)) {
     return html(403, loginHtml('Pedido rechazado.'))
   }
 
   const adminPath = adminPathFromEnv()
-  const passwordHash = process.env.ADMIN_PASSWORD_HASH ?? ''
-  const secret = process.env.ADMIN_SESSION_SECRET ?? ''
+  const passwordHash = env('ADMIN_PASSWORD_HASH')
+  const secret = env('ADMIN_SESSION_SECRET')
   if (!adminPath || !passwordHash || !secret) {
     return html(503, loginHtml('El acceso no está configurado.'))
   }
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
 
   if (isLocked(lock) || ipLocked(ip)) {
     const until = Math.max(lock.until, ipAttempts.get(ip)?.until ?? 0)
-    const headers: HeadersInit = until ? { 'Retry-After': String(Math.ceil((until - Date.now()) / 1000)) } : {}
+    const headers = until ? { 'Retry-After': String(Math.ceil((until - Date.now()) / 1000)) } : {}
     return html(429, loginHtml('', until), [], headers)
   }
 

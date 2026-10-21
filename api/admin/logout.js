@@ -2,7 +2,7 @@ import { LOCK_COOKIE, SESSION_COOKIE, clearCookieHeader } from '../../lib/admin-
 
 export const config = { runtime: 'nodejs' }
 
-function logoutResponse(request: Request) {
+function logoutResponse(request) {
   const secure = new URL(request.url).protocol === 'https:'
   const headers = new Headers({ Location: '/', 'cache-control': 'no-store' })
   headers.append('Set-Cookie', clearCookieHeader(SESSION_COOKIE, secure))
@@ -10,10 +10,10 @@ function logoutResponse(request: Request) {
   return new Response(null, { status: 303, headers })
 }
 
-export function POST(request: Request) {
+export function POST(request) {
   return logoutResponse(request)
 }
 
-export function GET(request: Request) {
+export function GET(request) {
   return logoutResponse(request)
 }
