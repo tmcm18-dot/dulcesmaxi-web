@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /editor.html
+Disallow: /api/
 Disallow: /checkout
 
 Sitemap: /sitemap.xml

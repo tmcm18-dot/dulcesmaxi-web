@@ -5,7 +5,6 @@ const SITE_KEY = 'dulces_maxi_site_v1'
 const CART_KEY = 'dulces_maxi_cart_v1'
 const FAV_KEY = 'dulces_maxi_favorites'
 const CONSENT_KEY = 'dulces_maxi_privacy_consent_v1'
-const ADMIN_KEY = 'dulces_maxi_admin_ok'
 const ORDERS_KEY = 'dulces_maxi_orders_v1'
 
 function readJson<T>(key: string, fallback: T): T {
@@ -74,15 +73,6 @@ export function loadConsent(): boolean | null {
 
 export function saveConsent(acceptedAnalytics: boolean) {
   writeJson(CONSENT_KEY, acceptedAnalytics)
-}
-
-export function isAdminSession() {
-  return typeof window !== 'undefined' && sessionStorage.getItem(ADMIN_KEY) === '1'
-}
-
-export function setAdminSession(ok: boolean) {
-  if (ok) sessionStorage.setItem(ADMIN_KEY, '1')
-  else sessionStorage.removeItem(ADMIN_KEY)
 }
 
 export function loadOrders(): StoredOrder[] {

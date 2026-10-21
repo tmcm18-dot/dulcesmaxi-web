@@ -3,7 +3,31 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "proxy": {
+    "entrypoint": "proxy.ts",
+    "matcher": [
+      "/admin",
+      "/admin/:path*",
+      "/editor.html",
+      "/editar-:path*",
+      "/api/admin/:path*"
+    ]
+  },
+  "redirects": [
+    { "source": "/admin", "destination": "/", "permanent": false },
+    { "source": "/admin/:path*", "destination": "/", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|assets/|editor\\.html).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/editor.html",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/api/admin/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    }
   ]
 }

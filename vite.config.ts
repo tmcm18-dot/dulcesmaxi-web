@@ -1,5 +1,9 @@
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+
+const root = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   plugins: [react()],
@@ -7,6 +11,10 @@ export default defineConfig({
     target: 'es2022',
     cssMinify: true,
     rollupOptions: {
+      input: {
+        main: resolve(root, 'index.html'),
+        editor: resolve(root, 'editor.html'),
+      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules/react-router')) return 'router'

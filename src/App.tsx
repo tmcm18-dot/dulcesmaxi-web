@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { CartProvider } from './context/CartContext'
 import { SiteProvider } from './context/SiteContext'
-import { AdminPage } from './pages/AdminPage'
 import { CartPage } from './pages/CartPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { Home } from './pages/Home'
@@ -17,7 +16,6 @@ export default function App() {
       <CartProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/admin" element={<AdminPage />} />
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/product/:id" element={<ProductPage />} />

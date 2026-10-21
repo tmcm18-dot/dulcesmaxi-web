@@ -12,10 +12,9 @@ import {
 } from 'lucide-react'
 import { useMemo, useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { ADMIN_PASSWORD } from '../content/defaultSite'
 import { useSite } from '../context/SiteContext'
 import { uid } from '../lib/format'
-import { fileToCompressedDataUrl, isAdminSession, resetSite, setAdminSession } from '../lib/storage'
+import { fileToCompressedDataUrl, resetSite } from '../lib/storage'
 import type { HomeSection, Product, SectionType, SiteColors, SiteContent } from '../types'
 
 const TABS = [
@@ -91,26 +90,21 @@ function emptySection(): HomeSection {
   }
 }
 
+async function serverLogout() {
+  try {
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })
+  } finally {
+    window.location.href = '/'
+  }
+}
+
 export function AdminPage() {
   const { site, setSite } = useSite()
-  const [authed, setAuthed] = useState(() => isAdminSession())
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [tab, setTab] = useState<(typeof TABS)[number][0]>('textos')
   const [draft, setDraft] = useState<SiteContent>(site)
   const [status, setStatus] = useState('')
 
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(site), [draft, site])
-
-  const login = () => {
-    if (password === ADMIN_PASSWORD) {
-      setAdminSession(true)
-      setAuthed(true)
-      setError('')
-    } else {
-      setError('Contraseña incorrecta')
-    }
-  }
 
   const persist = (next = draft) => {
     setSite(next)
@@ -122,39 +116,6 @@ export function AdminPage() {
     if (!file) return
     const url = await fileToCompressedDataUrl(file)
     apply(url)
-  }
-
-  if (!authed) {
-    return (
-      <main className="empty" style={{ minHeight: '100vh' }}>
-        <div className="benefit-icon" style={{ width: 64, height: 64, margin: '0 auto 16px', borderRadius: 16, background: 'var(--color-primary)', color: '#fff' }}>
-          →
-        </div>
-        <h1 className="font-display" style={{ fontSize: '2rem' }}>Ingresar a administración</h1>
-        <p style={{ color: 'var(--color-text-muted)' }}>Acceso exclusivo para gestionar Dulces Maxi</p>
-        <form
-          className="card"
-          style={{ maxWidth: 420, margin: '24px auto', textAlign: 'left' }}
-          onSubmit={(e) => {
-            e.preventDefault()
-            login()
-          }}
-        >
-          <label className="field">
-            Contraseña
-            <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </label>
-          {error ? <p style={{ color: '#B42318', fontWeight: 700 }}>{error}</p> : null}
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 16 }}>
-            Ingresar
-          </button>
-          <p style={{ marginTop: 12, fontSize: 12, color: 'var(--color-text-muted)' }}>
-            Contraseña inicial: <code>maxi2026</code>
-          </p>
-        </form>
-        <Link to="/" className="back-link">Volver a la tienda</Link>
-      </main>
-    )
   }
 
   return (
@@ -179,8 +140,7 @@ export function AdminPage() {
               className="btn btn-outline"
               style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)', background: 'transparent' }}
               onClick={() => {
-                setAdminSession(false)
-                setAuthed(false)
+                void serverLogout()
               }}
             >
               <LogOut size={16} /> Salir

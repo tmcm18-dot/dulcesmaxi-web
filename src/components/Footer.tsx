@@ -47,7 +47,6 @@ export function Footer() {
           <Link to="/terminos">Términos</Link>
           <Link to="/entregas">Entregas</Link>
           <Link to="/consumo-responsable">Consumo responsable</Link>
-          <Link to="/admin">Administrar</Link>
         </div>
         © {year} {site.brand.name} · Pastelería solo por encargo
       </div>

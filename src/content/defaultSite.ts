@@ -1,7 +1,5 @@
 import type { SiteContent } from '../types'
 
-export const ADMIN_PASSWORD = 'maxi2026'
-
 export const defaultSite: SiteContent = {
   version: 1,
   colors: {
