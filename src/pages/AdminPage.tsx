@@ -98,18 +98,26 @@ async function serverLogout() {
   }
 }
 
-export function AdminPage() {
+export function AdminPage({
+  embedded = false,
+  onSave,
+}: {
+  embedded?: boolean
+  onSave?: (site: SiteContent) => Promise<void>
+}) {
   const { site, setSite } = useSite()
+  const visibleTabs = embedded ? TABS.filter(([id]) => id !== 'productos') : TABS
   const [tab, setTab] = useState<(typeof TABS)[number][0]>('textos')
   const [draft, setDraft] = useState<SiteContent>(site)
   const [status, setStatus] = useState('')
 
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(site), [draft, site])
 
-  const persist = (next = draft) => {
+  const persist = async (next = draft) => {
     setSite(next)
     setDraft(next)
-    setStatus('Cambios guardados en este navegador.')
+    if (onSave) await onSave(next)
+    setStatus(onSave ? 'Cambios guardados en el servidor.' : 'Cambios guardados en este navegador.')
   }
 
   const onImage = async (file: File | undefined, apply: (url: string) => void) => {
@@ -119,7 +127,14 @@ export function AdminPage() {
   }
 
   return (
-    <div className="admin-shell">
+    <div className={embedded ? '' : 'admin-shell'}>
+      {embedded ? (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+          <button type="button" className="btn btn-primary" onClick={() => void persist()} disabled={!dirty}>
+            <Save size={16} /> Guardar sitio
+          </button>
+        </div>
+      ) : (
       <header className="admin-top">
         <div className="admin-top-inner">
           <Link to="/" className="icon-round" style={{ width: 44, height: 44, color: '#fff' }} aria-label="Volver a la tienda">
@@ -132,7 +147,7 @@ export function AdminPage() {
             </p>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            <button type="button" className="btn btn-primary" onClick={() => persist()} disabled={!dirty}>
+            <button type="button" className="btn btn-primary" onClick={() => void persist()} disabled={!dirty}>
               <Save size={16} /> Guardar
             </button>
             <button
@@ -148,9 +163,10 @@ export function AdminPage() {
           </div>
         </div>
       </header>
+      )}
       <div className="admin-layout">
         <nav className="admin-nav" aria-label="Módulos del editor">
-          {TABS.map(([id, label]) => (
+          {visibleTabs.map(([id, label]) => (
             <button key={id} type="button" className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>
               {label}
             </button>

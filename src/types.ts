@@ -16,8 +16,11 @@ export type Product = {
   description: string
   price: number
   compareAtPrice: number
+  cost?: number
   size: string
   stock: number
+  lowStockThreshold?: number
+  expiresAt?: string
   category: CategoryKey
   featured: boolean
   imageUrl: string

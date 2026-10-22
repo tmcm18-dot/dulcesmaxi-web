@@ -1336,6 +1336,96 @@ a:focus-visible {
   background: #fffaf4;
 }
 
+.muted {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+label.field {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+label.field input,
+label.field select,
+label.field textarea {
+  margin-top: 0;
+  font-weight: 400;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-nav a {
+  display: flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  border-radius: 16px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #5b4d59;
+}
+
+.admin-nav a.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.admin-metrics {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+}
+
+.admin-metrics .admin-card {
+  margin-bottom: 0;
+}
+
+.admin-split,
+.admin-grid-2 {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid #e4d9e2;
+  vertical-align: top;
+}
+
+.admin-table th {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5b4d59;
+}
+
+.admin-table tr:hover td {
+  background: #fdf7fb;
+}
+
 @media (min-width: 640px) {
   .product-body {
     padding: 20px;
@@ -1361,7 +1451,9 @@ a:focus-visible {
     align-items: center;
     justify-content: space-between;
   }
-  .form-grid.two {
+  .form-grid.two,
+  .admin-grid-2,
+  .admin-split {
     grid-template-columns: 1fr 1fr;
   }
 }

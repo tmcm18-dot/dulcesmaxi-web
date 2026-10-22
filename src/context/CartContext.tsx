@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { loadCart, saveCart } from '../lib/storage'
+import { loadCart, loadConsent, saveCart } from '../lib/storage'
+import { analyticsSessionId, storefront } from '../lib/storefront'
 import type { CartItem, Product } from '../types'
 
 type CartContextValue = {
@@ -39,6 +40,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const persist = useCallback((next: CartItem[]) => {
     setItems(next)
     saveCart(next)
+    if (loadConsent()) {
+      void storefront('sync_cart', {
+        sessionId: analyticsSessionId(),
+        consent: true,
+        items: next,
+      })
+    }
   }, [])
 
   const add = useCallback(

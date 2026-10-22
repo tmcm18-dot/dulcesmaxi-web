@@ -3,6 +3,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Seo } from '../components/Seo'
 import { useSite } from '../context/SiteContext'
+import { storefront } from '../lib/storefront'
 import { pastryWhatsAppMessage, waLink } from '../lib/whatsapp'
 
 const COVERS = [
@@ -55,6 +56,17 @@ export function PasteleriaPage() {
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (!form.consent) return
+    void storefront('create_pastry_request', {
+      category,
+      product: product === 'Torta personalizada' && form.cake_name ? form.cake_name : product,
+      description: form.description,
+      kg: category === 'torta' ? form.desired_kg : '',
+      eventDate: form.event_date,
+      cover: form.cover,
+      customer: form.customer_name,
+      phone: form.phone,
+      email: form.email,
+    })
     const url = waLink(
       site.brand.whatsapp,
       pastryWhatsAppMessage({

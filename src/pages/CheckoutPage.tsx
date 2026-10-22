@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext'
 import { useSite } from '../context/SiteContext'
 import { formatPrice, uid } from '../lib/format'
 import { saveOrder } from '../lib/storage'
+import { storefront } from '../lib/storefront'
 import { orderWhatsAppMessage, waLink } from '../lib/whatsapp'
 
 export function CheckoutPage() {
@@ -45,8 +46,9 @@ export function CheckoutPage() {
     if (!form.accept_terms) return
     if (containsAlcohol && !form.age_confirmed) return
     const orderNumber = `DM-${Date.now().toString().slice(-6)}`
+    const localId = uid('order')
     saveOrder({
-      id: uid('order'),
+      id: localId,
       createdAt: new Date().toISOString(),
       customer: form.customer_name,
       email: form.email,
@@ -58,6 +60,20 @@ export function CheckoutPage() {
       items,
       total,
     })
+    void storefront('create_order', {
+      number: orderNumber,
+      customer: form.customer_name,
+      email: form.email,
+      phone: form.phone,
+      deliveryMethod: form.delivery_method,
+      address: form.address,
+      paymentMethod: form.payment_method,
+      notes: form.notes,
+      newsletter: form.newsletter,
+      items,
+      total,
+    })
+    void storefront('track_event', { type: 'checkout', path: '/checkout' })
     const message = orderWhatsAppMessage({
       orderNumber,
       customer: form.customer_name,

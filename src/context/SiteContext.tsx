@@ -47,18 +47,47 @@ function applyColors(site: SiteContent) {
   if (theme) theme.setAttribute('content', site.colors.primary)
 }
 
-export function SiteProvider({ children }: { children: ReactNode }) {
-  const [site, setSiteState] = useState<SiteContent>(() => loadSite())
+export function SiteProvider({
+  children,
+  initialSite,
+  persistMode = 'local',
+}: {
+  children: ReactNode
+  initialSite?: SiteContent
+  persistMode?: 'local' | 'none'
+}) {
+  const [site, setSiteState] = useState<SiteContent>(() => initialSite || loadSite())
   const [favorites, setFavorites] = useState<string[]>(() => loadFavorites())
 
   useEffect(() => {
     applyColors(site)
   }, [site])
 
+  useEffect(() => {
+    if (initialSite || persistMode === 'none') return
+    fetch('/api/catalog')
+      .then((res) => res.json())
+      .then((data: { site?: Partial<SiteContent>; products?: Product[] }) => {
+        const next: SiteContent = {
+          ...defaultSite,
+          ...(data.site || {}),
+          colors: { ...defaultSite.colors, ...(data.site?.colors || {}) },
+          brand: { ...defaultSite.brand, ...(data.site?.brand || {}) },
+          hero: { ...defaultSite.hero, ...(data.site?.hero || {}) },
+          products: data.products?.length ? data.products : defaultSite.products,
+        }
+        setSiteState(next)
+        saveSite(next)
+      })
+      .catch(() => {
+        /* usa cache local */
+      })
+  }, [initialSite, persistMode])
+
   const setSite = useCallback((next: SiteContent) => {
     setSiteState(next)
-    saveSite(next)
-  }, [])
+    if (persistMode === 'local') saveSite(next)
+  }, [persistMode])
 
   const toggleFavorite = useCallback((id: string) => {
     setFavorites((prev) => {
