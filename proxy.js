@@ -25,21 +25,16 @@ export default async function proxy(request) {
     return Response.redirect(url, 302)
   }
 
-  if (pathname === '/editor.html' || pathname === '/editor') {
+  if (pathname === '/editor.html' || pathname.startsWith('/editor.html/') || pathname === '/editor') {
     if (!sessionOk) return notFound()
-    url.pathname = '/editor.html'
-    url.search = ''
-    return rewrite(url)
+    return rewrite(new URL('/editor.html', url.origin))
   }
 
   if (adminPath && isSecretAdminPath(pathname, adminPath)) {
     if (sessionOk) {
-      url.pathname = '/editor.html'
-      url.search = ''
-      return rewrite(url)
+      return rewrite(new URL('/editor.html', url.origin))
     }
-    url.pathname = '/api/admin/login'
-    return rewrite(url)
+    return rewrite(new URL('/api/admin/login', url.origin))
   }
 
   return next()
