@@ -25,7 +25,7 @@ export default async function proxy(request) {
     return Response.redirect(url, 302)
   }
 
-  if (pathname === '/editor.html' || pathname.startsWith('/editor.html/') || pathname === '/editor') {
+  if (pathname === '/editor.html' || pathname === '/editor') {
     if (!sessionOk) return notFound()
     return rewrite(new URL('/editor.html', url.origin))
   }
@@ -33,6 +33,9 @@ export default async function proxy(request) {
   if (adminPath && isSecretAdminPath(pathname, adminPath)) {
     if (sessionOk) {
       return rewrite(new URL('/editor.html', url.origin))
+    }
+    if (pathname !== `/${adminPath}`) {
+      return Response.redirect(new URL(`/${adminPath}`, url.origin), 302)
     }
     return rewrite(new URL('/api/admin/login', url.origin))
   }

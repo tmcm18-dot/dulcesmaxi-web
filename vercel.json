@@ -9,8 +9,8 @@
       "/admin",
       "/admin/:path*",
       "/editor.html",
-      "/editor.html/:path*",
-      "/editar-:path*",
+      "/editar-:slug",
+      "/editar-:slug/:path*",
       "/api/admin/:path*"
     ]
   },
@@ -20,6 +20,7 @@
   ],
   "rewrites": [
     { "source": "/editor.html/:path*", "destination": "/editor.html" },
+    { "source": "/api/admin/login/:path*", "destination": "/api/admin/login" },
     { "source": "/((?!api/|assets/|editor\\.html).*)", "destination": "/index.html" }
   ],
   "headers": [
